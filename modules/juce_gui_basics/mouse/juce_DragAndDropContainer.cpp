@@ -41,13 +41,15 @@ public:
                         Component* const sourceComponent,
                         const MouseInputSource* draggingSource,
                         DragAndDropContainer& ddc,
-                        Point<int> offset)
+                        Point<int> offset,
+                        bool shouldCheckForExternalDragContinuously)
         : sourceDetails (desc, sourceComponent, Point<int>()),
           image (im), owner (ddc),
           mouseDragSource (draggingSource->getComponentUnderMouse()),
           imageOffset (offset),
           originalInputSourceIndex (draggingSource->getIndex()),
-          originalInputSourceType (draggingSource->getType())
+          originalInputSourceType (draggingSource->getType()),
+          shouldCheckForExternalDragContinuously(shouldCheckForExternalDragContinuously)
     {
         updateSize();
 
@@ -227,6 +229,7 @@ private:
     Time lastTimeOverTarget;
     int originalInputSourceIndex;
     MouseInputSource::InputSourceType originalInputSourceType;
+    bool shouldCheckForExternalDragContinuously = false;
 
     void updateSize()
     {
@@ -316,7 +319,7 @@ private:
 
     void checkForExternalDrag (DragAndDropTarget::SourceDetails& details, Point<int> screenPos)
     {
-        if (! hasCheckedForExternalDrag)
+        if (! hasCheckedForExternalDrag || shouldCheckForExternalDragContinuously)
         {
             if (Desktop::getInstance().findComponentAt (screenPos) == nullptr)
             {
@@ -384,7 +387,8 @@ private:
 
 
 //==============================================================================
-DragAndDropContainer::DragAndDropContainer()
+DragAndDropContainer::DragAndDropContainer() :
+shouldCheckForExternalDragContinuously(false)
 {
 }
 
@@ -458,7 +462,7 @@ void DragAndDropContainer::startDragging (const var& sourceDescription,
     }
 
     auto* dragImageComponent = dragImageComponents.add (new DragImageComponent (dragImage, sourceDescription, sourceComponent,
-                                                                                draggingSource, *this, imageOffset));
+                                                                                draggingSource, *this, imageOffset, shouldCheckForExternalDragContinuously));
 
     if (allowDraggingToExternalWindows)
     {
@@ -500,6 +504,11 @@ bool DragAndDropContainer::isDragAndDropActive() const
     return dragImageComponents.size() > 0;
 }
 
+void DragAndDropContainer::setShouldCheckForExternalDragContinuously(bool shouldCheck)
+{
+    shouldCheckForExternalDragContinuously = shouldCheck;
+}
+    
 int DragAndDropContainer::getNumCurrentDrags() const
 {
     return dragImageComponents.size();
