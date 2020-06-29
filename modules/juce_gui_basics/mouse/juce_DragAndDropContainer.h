@@ -101,6 +101,9 @@ public:
 
     /** Returns true if something is currently being dragged. */
     bool isDragAndDropActive() const;
+    
+    /** Sets whether check for external drag should be performed continuously. Default: false */
+    void setShouldCheckForExternalDragContinuously(bool shouldCheck);
 
     /** Returns the number of things currently being dragged. */
     int getNumCurrentDrags() const;
@@ -234,6 +237,7 @@ private:
     //==============================================================================
     class DragImageComponent;
     OwnedArray<DragImageComponent> dragImageComponents;
+    bool shouldCheckForExternalDragContinuously;
 
     const MouseInputSource* getMouseInputSourceForDrag (Component* sourceComponent, const MouseInputSource* inputSourceCausingDrag);
     bool isAlreadyDragging (Component* sourceComponent) const noexcept;
