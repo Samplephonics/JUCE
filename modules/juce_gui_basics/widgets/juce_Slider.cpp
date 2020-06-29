@@ -686,8 +686,8 @@ public:
     //==============================================================================
     void handleRotaryDrag (const MouseEvent& e)
     {
-        auto dx = e.position.x - sliderRect.getCentreX();
-        auto dy = e.position.y - sliderRect.getCentreY();
+        auto dx = e.position.x - (float) sliderRect.getCentreX();
+        auto dy = e.position.y - (float) sliderRect.getCentreY();
 
         if (dx * dx + dy * dy > 25.0f)
         {
@@ -769,7 +769,7 @@ public:
         }
         else
         {
-            newPos = (mousePos - sliderRegionStart) / (double) sliderRegionSize;
+            newPos = (mousePos - (float) sliderRegionStart) / (double) sliderRegionSize;
 
             if (isVertical())
                 newPos = 1.0 - newPos;
@@ -1141,8 +1141,8 @@ public:
                 {
                     auto pixelPos = (float) getLinearSliderPos (pos);
 
-                    mousePos = owner.localPointToGlobal (Point<float> (isHorizontal() ? pixelPos : (owner.getWidth() / 2.0f),
-                                                                       isVertical()   ? pixelPos : (owner.getHeight() / 2.0f)));
+                    mousePos = owner.localPointToGlobal (Point<float> (isHorizontal() ? pixelPos : ((float) owner.getWidth()  / 2.0f),
+                                                                       isVertical()   ? pixelPos : ((float) owner.getHeight() / 2.0f)));
                 }
 
                 const_cast <MouseInputSource&> (ms).setScreenPosition (mousePos);
